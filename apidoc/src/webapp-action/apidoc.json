@@ -1,0 +1,19 @@
+{
+  "name": "SLIPO Identifiers Registry API",
+  "title": "SSLIPO Identifiers Registry API",
+  "description": "",
+  "url": "https://registry.dev.slipo.eu/",
+  "header": {
+    "title": "Introduction",
+    "filename": "./header.md"
+  },
+  "order": [
+    "Registration",
+    "register a POI",
+    "POI Search"
+  ],
+  "template": {
+    "withCompare": false,
+    "withGenerator": false
+  }
+}
