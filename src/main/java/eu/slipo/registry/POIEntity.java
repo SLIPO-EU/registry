@@ -1,5 +1,7 @@
 package eu.slipo.registry;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vividsolutions.jts.geom.Geometry;
+
 
 @Entity
 @Table(name ="pois", schema= "public")
@@ -31,6 +34,8 @@ public class POIEntity{
 	private String categories;
 	private Geometry geo;
 	//TODO same a
+	
+	
 	public POIEntity() {}
 	public POIEntity(String tempId, String source, String sourceId, String names, String categories, Geometry geo) {
 		super();

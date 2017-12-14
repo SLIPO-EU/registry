@@ -1,17 +1,26 @@
 package eu.slipo.registry.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class NewPoisRequest {
 
+	@NotEmpty
 	private String tmpId;
 	private String source;
 	private String sourceId;
-	private String names;
+	@NotEmpty
+	private ArrayList<String> names;
 	private String category;
-	private String geometry; 
+	@NotEmpty @NotNull
+	private Geometry geometry; 
 	
 	public NewPoisRequest() {}
 
@@ -39,11 +48,11 @@ public class NewPoisRequest {
 		this.sourceId = Objects.requireNonNull(sourceId);
 	}
 
-	public String getNames() {
+	public ArrayList<String> getNames() {
 		return names;
 	}
 
-	public void setNames(String names) {
+	public void setNames(ArrayList<String> names) {
 		this.names = Objects.requireNonNull(names);
 	}
 
@@ -55,11 +64,11 @@ public class NewPoisRequest {
 		this.category = category;
 	}
 
-	public String getGeometry() {
+	public Geometry getGeometry() {
 		return geometry;
 	}
 
-	public void setGeometry(String geometry) {
+	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 	}
 
