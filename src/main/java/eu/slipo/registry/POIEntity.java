@@ -23,14 +23,12 @@ public class POIEntity{
 	//@GenericGenerator(name="system-uuid", strategy = "uuid")
 	@GeneratedValue( strategy = GenerationType.SEQUENCE, generator = "pois_id_seq")
 	@SequenceGenerator( sequenceName = "public.pois_id_seq", name = "pois_id_seq", allocationSize = 1)
-	@Column(name = "id")
 	private Long id;
 	@Transient @JsonIgnore
 	private String tempId;
 	private String source;
 	private String sourceId;
 	private String names;
-	@Transient
 	private String categories;
 	private Geometry geo;
 	//TODO same a
