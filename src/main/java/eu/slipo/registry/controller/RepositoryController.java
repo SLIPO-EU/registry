@@ -2,16 +2,23 @@ package eu.slipo.registry.controller;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import javax.validation.Valid;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +29,11 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import eu.slipo.registry.POIEntity;
 import eu.slipo.registry.model.BoxRequest;
+import eu.slipo.registry.model.Error;
 import eu.slipo.registry.model.ErrorCode;
 import eu.slipo.registry.model.GenericErrorCode;
 import eu.slipo.registry.model.NewPoisRequest;
+import eu.slipo.registry.model.NewPoisResponse;
 import eu.slipo.registry.model.RadiusRequest;
 import eu.slipo.registry.model.RestResponse;
 import eu.slipo.registry.repository.JpaPOIRepository;
@@ -34,7 +43,7 @@ import eu.slipo.registry.repository.POIRepository;
 
 @RestController
 @RequestMapping(produces = "application/json")
-public class RepositoryController
+public class RepositoryController extends BaseController
 {
 
 	@Autowired
@@ -42,6 +51,8 @@ public class RepositoryController
 	
 	@Autowired
 	POIRepository poiRepo2;
+	
+  
 	 /**
      * Register new POIs
      *
@@ -50,13 +61,20 @@ public class RepositoryController
 	 * @throws NoSuchAuthorityCodeException 
      */
 	@RequestMapping(method= RequestMethod.POST, value="/register", consumes= MediaType.APPLICATION_JSON_VALUE)
-	RestResponse<Long> addNewPOIs(@RequestBody NewPoisRequest body) {
+	RestResponse<NewPoisResponse> addNewPOIs(@RequestBody @Valid NewPoisRequest body, BindingResult results) {
+		System.out.println(results);
+
+	//	for (Gun g: gunList)
+		if (results.hasErrors()) {
+			return RestResponse.error((Error) results);
+		}
 		System.out.println(body);
 		POIEntity poi= new POIEntity();
+		poi.setId(UUID.randomUUID());
 		poi.setTempId(body.getTmpId());
 		poi.setSource(body.getSource());
 		poi.setSourceId(body.getSourceId());
-		poi.setCategories(body.getCategory());
+		poi.setCategories(body.getCategory().toString());
 		
 		
 		Geometry location = (Geometry) body.getGeometry().clone();
@@ -69,7 +87,8 @@ public class RepositoryController
 		poi.setNames(body.getNames().toString());
 		
 		this.poiRepo.save(poi);
-		return RestResponse.result(poi.getId());
+		NewPoisResponse responce= new NewPoisResponse(body.getSourceId(),1,poi.getId().toString());
+		return RestResponse.result(responce);
 
 		
 	}
@@ -82,7 +101,7 @@ public class RepositoryController
      * @return Error message if it fails
      */
 	@RequestMapping(method= RequestMethod.GET, value="/delete/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
-	RestResponse<Void> deletePOI(@PathVariable Long id){
+	RestResponse<Void> deletePOI(@PathVariable UUID id){
 		try {
 		this.poiRepo.delete(id);
 		}catch (Exception e) {
@@ -100,13 +119,13 @@ public class RepositoryController
      * @return Probably the POI
      */
 	@RequestMapping(method= RequestMethod.GET, value="/poi/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
-	RestResponse<POIEntity> getPOIByURI(@PathVariable Long id){
+	RestResponse<POIEntity> getPOIByURI(@PathVariable UUID id){
 		POIEntity poi=this.poiRepo.findOne(id);
 		if (poi != null) {
 			return RestResponse.result(poi);
 		}else {
 			GenericErrorCode ec= new GenericErrorCode("404");
-			return RestResponse.error(ec, "Poi not found");
+			return RestResponse.error(ec, "Poi with uid "+ id + " not found.");
 		}
 	}
 	
@@ -200,14 +219,30 @@ public class RepositoryController
     * Override a POI
     *
     */
-	@RequestMapping(method= RequestMethod.POST, value="/update/", consumes= MediaType.APPLICATION_JSON_VALUE)
-	RestResponse<Void> updatePOIs(@RequestBody POIEntity body){
-		try {
-		this.poiRepo.save(body);
-		}catch(Exception e) {
-			GenericErrorCode ec= new GenericErrorCode("404");
-			return RestResponse.error(ec,e.getMessage());
+	@RequestMapping(method= RequestMethod.POST, value="/update/{id}", consumes= MediaType.APPLICATION_JSON_VALUE)
+	RestResponse<Void> updatePOIs(@PathVariable UUID id,@RequestBody NewPoisRequest body){
+		POIEntity poi=this.poiRepo.findOne(id);
+		if (poi == null) {
+			return RestResponse.error(new GenericErrorCode(HttpStatus.NOT_FOUND.toString()),"Unable to upate. User with id " + id + " not found.");
 		}
+		System.out.println(poi);
+		poi.setTempId(body.getTmpId());
+		poi.setSource(body.getSource());
+		poi.setSourceId(body.getSourceId());
+		poi.setCategories(body.getCategory().toString());
+		
+		
+		Geometry location = (Geometry) body.getGeometry().clone();
+		if (body.getGeometry().getSRID()==0) { // set default SRID if not any
+		location.setSRID(4326);}
+		System.out.println(location.getSRID());
+		System.out.println(body.getGeometry().getSRID() );
+
+		poi.setGeo(location);
+		poi.setNames(body.getNames().toString());
+		
+		this.poiRepo.save(poi);
+
 		return RestResponse.result(null);
 	}
 	

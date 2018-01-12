@@ -11,11 +11,23 @@
  * @apiParam (Parameter)            {String}    source_id         The​ ​ identifier​ ​ of​ ​ the​ ​ POI​ ​ in​ ​ its​ ​ source
  * @apiParam (Parameter)            {String[]}  names             A list​ ​ containing​ ​ the​ ​ known​ ​ names​ ​ of​ ​ the​ ​ POI
  * @apiParam (Parameter)            {String[]}  categories        ​A list​ ​ of​ ​ categories​ ​ this​ ​ POI​ ​ belongs​ ​ to
- * @apiParam (Parameter)            {Object}    geom​   ​ ​          The​ ​ (default)​ ​ geometry​ ​ of​ ​ the​ ​ POI in WKT format
- * @apiParam (Parameter)            {String[]}  same​              A ​ ​ list​ ​ of​ ​ URIs​ ​ of​ ​ POIs​ ​ to​ ​ which​ ​ this​ ​ POI​ ​ has​ ​ a ​ ​ 'sameAs'​ ​ relationship
+ * @apiParam (Parameter)            {Object}    geom​   ​ ​          The​ ​ (default)​ ​ geometry​ ​ of​ ​ the​ ​ POI in GeoJSON format
  *
  * @apiParamExample {json} Request Example
- * POST https://registry.dev.slipo.eu/register {}
+ * POST https://registry.dev.slipo.eu/register {
+  "tmpId": "imis",
+  "source": "AthenaRC",
+  "sourceId": "IMSI",
+  "names": ["Athena Research Center", "Athena RC"],
+  "category": ["Research Center"],
+  "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.80241096019745,
+          38.036686288593074
+        ]
+      }
+}
  *
  * @apiSuccess                            {Boolean}   success           Returns <code>true</code> or <code>false</code>
  * indicating success of the operation.
@@ -31,19 +43,14 @@
  * @apiSuccessExample {json} Response Example
  * HTTP/1.1 200 OK
  * {
- *   "errors": [],
- *   "success": true,
- *   "result": [{
- *     "source_id": "123123115",
- *     "status": "1",
- *     "uri": "ASDFASDA"},
- *      {
- *     "source_id": "34523452",
- *     "status": "2",
- *     "uri": null }
- *                
- *    ]
- * }
+    "errors": [],
+    "result": {
+        "status": 1,
+        "tempId": "IMSI",
+        "uri": "337b2899-5ad7-4144-85d1-30d6e3daf94f"
+    },
+    "success": true
+}
  *
  * @apiError                              {Boolean}   success           Always <code>false</code>.
  * @apiError                              {Object[]}  errors            Array of <code>Error</code> objects.

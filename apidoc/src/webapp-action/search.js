@@ -7,10 +7,10 @@
  *
  * @apiDescription Retrive a POI by its URI
  *
- * @apiParam (Query String Parameters)    {String}    uri              A <code>URI</code>
+ * @apiParam (Query String Parameters)    {String}    id              A <code>UUId</code> 
  *
  * @apiParamExample {json} Request Example
- * GET https://registry.dev.slipo.eu/poi/{poi_uri}
+ * GET https://registry.dev.slipo.eu/poi/{ID}
  *
  * @apiSuccess                            {Boolean}   success           Returns <code>true</code> or <code>false</code>
  * indicating success of the operation.
@@ -19,10 +19,10 @@
  * <code>success</code> is <code>false</code>, <code>result</code> is <code>undefined</code>
  *
  * @apiSuccess (POI)            {String}    source            An​ ​ identifier​ ​ specifying​ ​ the​ ​ source​ ​ of​ ​ this​ ​ POI
- * @apiSuccess (POI)            {String}    source_id         The​ ​ identifier​ ​ of​ ​ the​ ​ POI​ ​ in​ ​ its​ ​ source
- * @apiSuccess (POI)            {String[]}  names             A list​ ​ containing​ ​ the​ ​ known​ ​ names​ ​ of​ ​ the​ ​ POI
- * @apiSuccess (POI)            {String[]}  categories        ​A list​ ​ of​ ​ categories​ ​ this​ ​ POI​ ​ belongs​ ​ to
- * @apiSuccess (POI)            {Object}    geom​   ​ ​          The​ ​ (default)​ ​ geometry​ ​ of​ ​ the​ ​ POI in WKT format
+ * @apiSuccess (POI)            {String}    sourceId         The​ ​ identifier​ ​ of​ ​ the​ ​ POI​ ​ in​ ​ its​ ​ source
+ * @apiSuccess (POI)            {String}    names             A String containing​ ​ the​ ​ known​ ​ names​ ​ of​ ​ the​ ​ POI
+ * @apiSuccess (POI)            {String}    categories        ​A String ​ of​ ​ categories​ ​ this​ ​ POI​ ​ belongs​ ​ to
+ * @apiSuccess (POI)            {Object}    geo ​   ​ ​          The​ ​ (default)​ ​ geometry​ ​ of​ ​ the​ ​ POI in GeoJSON format
  * @apiSuccess (POI)            {String[]}  same​              A ​ ​ list​ ​ of​ ​ URIs​ ​ of​ ​ POIs​ ​ to​ ​ which​ ​ this​ ​ POI​ ​ has​ ​ 
  * a ​ ​'sameAs'​ ​ relationship
  *
@@ -31,15 +31,20 @@
  * {
  *   "errors": [],
  *   "success": true,
- *   "result": {
- *     "URI": "asdfasdf",
- *     "names": "",
- *     "source": "",
- *     "source_id": "",
- *     "categories": [],
- *     "geom": {},
- *     "same": []
- *   }
+     "result": {
+        "categories": "[Research Center]",
+        "geo": {
+            "coordinates": [
+                23.80241096019745,
+                38.036686288593074
+            ],
+            "type": "Point"
+        },
+        "id": "32e833a9-f1fd-4cb5-8f11-e8d307b81503",
+        "names": "[Athena Research Center, Athena RC]",
+        "source": "AthenaRC",
+        "sourceId": "IMSI"
+    }
  * }
  *
  * @apiError                              {Boolean}   success           Always <code>false</code>.
@@ -52,12 +57,16 @@
  * @apiErrorExample Error Response Example
  * HTTP/1.1 200 OK
  * {
- *   errors: [{
- *     code: "FileSystemErrorCode.PATH_NOT_FOUND",
- *     description: "POI was not found."
- *   }],
- *   success: false
+    "errors": [
+        {
+            "code": {},
+            "description": "Poi with uid 32e833a9-f1fd-4cb5-8f11-e8d307b81504 not found."
+        }
+    ],
+    "success": false
+
  * }
  *
+ * 
  */
 function browse() { return; }

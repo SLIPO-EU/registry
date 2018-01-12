@@ -18,8 +18,8 @@ public class NewPoisRequest {
 	private String sourceId;
 	@NotEmpty
 	private ArrayList<String> names;
-	private String category;
-	@NotEmpty @NotNull
+	private List<String> category;
+	@NotNull
 	private Geometry geometry; 
 	
 	public NewPoisRequest() {}
@@ -56,11 +56,11 @@ public class NewPoisRequest {
 		this.names = Objects.requireNonNull(names);
 	}
 
-	public String getCategory() {
+	public List<String> getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(List<String> category) {
 		this.category = category;
 	}
 

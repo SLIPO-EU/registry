@@ -1,6 +1,7 @@
 package eu.slipo.registry;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +22,9 @@ public class POIEntity{
 	
 	@Id //@GeneratedValue(generator="system-uuid")
 	//@GenericGenerator(name="system-uuid", strategy = "uuid")
-	@GeneratedValue( strategy = GenerationType.SEQUENCE, generator = "pois_id_seq")
-	@SequenceGenerator( sequenceName = "public.pois_id_seq", name = "pois_id_seq", allocationSize = 1)
-	private Long id;
+	//@GeneratedValue( strategy = GenerationType.SEQUENCE, generator = "pois_id_seq")
+	//@SequenceGenerator( sequenceName = "public.pois_id_seq", name = "pois_id_seq", allocationSize = 1)
+	private UUID id;
 	@Transient @JsonIgnore
 	private String tempId;
 	private String source;
@@ -80,8 +81,11 @@ public class POIEntity{
 	public void setGeo(Geometry geo) {
 		this.geo = geo;
 	}
-	public Long getId() {
+	public UUID getId() {
 		return id;
+	}
+	public void setId(UUID a) {
+		this.id=a;
 	}
 	@Override
 	public String toString() {

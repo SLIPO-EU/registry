@@ -2,6 +2,7 @@ package eu.slipo.registry.repository;
 
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -29,7 +30,7 @@ public class POIRepository {
     EntityManager entityManager;
     
     
-	public POIEntity findOne(Long id)
+	public POIEntity findOne(UUID id)
 	{
 		return repository.findOne(id);
 	}

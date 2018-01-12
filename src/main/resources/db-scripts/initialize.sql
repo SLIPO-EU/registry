@@ -15,7 +15,7 @@ CREATE EXTENSION IF NOT EXISTS postgis_topology;
 
 CREATE TABLE pois
 (
-  id bigint NOT NULL,
+  id UUID NOT NULL,
   "source" character varying(32),
   "source_id" character varying(64),
   "names" character varying(64) NOT NULL,
