@@ -11,14 +11,12 @@ import javax.validation.Valid;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,15 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vividsolutions.jts.geom.Geometry;
 
 import eu.slipo.registry.POIEntity;
+import eu.slipo.registry.SameAsEntity;
 import eu.slipo.registry.model.BoxRequest;
 import eu.slipo.registry.model.Error;
-import eu.slipo.registry.model.ErrorCode;
 import eu.slipo.registry.model.GenericErrorCode;
 import eu.slipo.registry.model.NewPoisRequest;
 import eu.slipo.registry.model.NewPoisResponse;
 import eu.slipo.registry.model.RadiusRequest;
 import eu.slipo.registry.model.RestResponse;
 import eu.slipo.registry.repository.JpaPOIRepository;
+import eu.slipo.registry.repository.JpaSameAsRepository;
 import eu.slipo.registry.repository.POIRepository;
 
 
@@ -52,6 +51,9 @@ public class RepositoryController extends BaseController
 	@Autowired
 	POIRepository poiRepo2;
 	
+	@Autowired
+	JpaSameAsRepository sameRepo;
+	
   
 	 /**
      * Register new POIs
@@ -61,13 +63,13 @@ public class RepositoryController extends BaseController
 	 * @throws NoSuchAuthorityCodeException 
      */
 	@RequestMapping(method= RequestMethod.POST, value="/register", consumes= MediaType.APPLICATION_JSON_VALUE)
-	RestResponse<NewPoisResponse> addNewPOIs(@RequestBody @Valid NewPoisRequest body, BindingResult results) {
+	RestResponse<List<NewPoisResponse>> addNewPOIs(@RequestBody @Valid ArrayList<NewPoisRequest> bodies, BindingResult results) {
 		System.out.println(results);
-
-	//	for (Gun g: gunList)
 		if (results.hasErrors()) {
 			return RestResponse.error((Error) results);
 		}
+		List<NewPoisResponse> responce = new ArrayList<NewPoisResponse>();
+		for (NewPoisRequest body:bodies) {
 		System.out.println(body);
 		POIEntity poi= new POIEntity();
 		poi.setId(UUID.randomUUID());
@@ -87,7 +89,48 @@ public class RepositoryController extends BaseController
 		poi.setNames(body.getNames().toString());
 		
 		this.poiRepo.save(poi);
-		NewPoisResponse responce= new NewPoisResponse(body.getSourceId(),1,poi.getId().toString());
+		responce.add(new NewPoisResponse(body.getTmpId(),1,poi.getId().toString()));
+
+		}
+		
+		return RestResponse.result(responce);
+
+	}
+	
+	@RequestMapping(method= RequestMethod.POST, value="/registerBach", consumes= MediaType.APPLICATION_JSON_VALUE)
+	RestResponse<List<NewPoisResponse>> addNewBachPOIs(@RequestBody @Valid ArrayList<NewPoisRequest> bodys, BindingResult results) {
+		System.out.println(results);
+		String prefix = "http://slipo.eu/id/poi/";
+		if (results.hasErrors()) {
+			return RestResponse.error((Error) results);
+		}
+		List<NewPoisResponse> responce = new ArrayList<NewPoisResponse>();
+		for (NewPoisRequest body:bodys) {
+		System.out.println(body);
+		POIEntity poi= new POIEntity();
+		String ids = body.getTmpId();
+		UUID new_id = UUID.fromString(ids.substring(prefix.length()));
+		poi.setId(new_id);
+		poi.setTempId(body.getTmpId());
+		poi.setSource(body.getSource());
+		poi.setSourceId(body.getSourceId());
+		poi.setCategories(body.getCategory().toString());
+		
+		
+		Geometry location = (Geometry) body.getGeometry().clone();
+		if (body.getGeometry().getSRID()==0) { // set default SRID if not any
+		location.setSRID(4326);}
+		System.out.println(location.getSRID());
+		System.out.println(body.getGeometry().getSRID() );
+
+		poi.setGeo(location);
+		poi.setNames(body.getNames().toString());
+		
+		this.poiRepo.save(poi);
+		responce.add(new NewPoisResponse(body.getTmpId(),1,poi.getId().toString()));
+
+		}
+		
 		return RestResponse.result(responce);
 
 		
@@ -246,7 +289,35 @@ public class RepositoryController extends BaseController
 		return RestResponse.result(null);
 	}
 	
-	
+
+	/**
+    * Set Same as relationship for 2 pois
+    *
+    */
+	@RequestMapping(method= RequestMethod.PUT, value="/setSame/{id1}/{id2}", consumes= MediaType.APPLICATION_JSON_VALUE)
+	RestResponse<SameAsEntity> setSameAs(@PathVariable UUID id1,@PathVariable UUID id2){
+		POIEntity poi1=this.poiRepo.findOne(id1);
+		POIEntity poi2=this.poiRepo.findOne(id2);
+
+		if (poi1 == null) {
+			return RestResponse.error(new GenericErrorCode(HttpStatus.NOT_FOUND.toString()),"Unable to upate. POI with id " + id1 + " not found.");
+		}
+
+		if (poi2 == null) {
+			return RestResponse.error(new GenericErrorCode(HttpStatus.NOT_FOUND.toString()),"Unable to upate. POI with id " + id2 + " not found.");
+		}
+		
+		if (id1 == id2) {
+			return RestResponse.error(new GenericErrorCode(HttpStatus.BAD_REQUEST.toString()),"Unable to upate.POIs cant have the same id.");
+		}
+		SameAsEntity sas= new SameAsEntity();
+		sas.setId1(id1);
+		sas.setId2(id2);
+		
+		this.sameRepo.save(sas);
+
+		return RestResponse.result(sas);
+	}
 	
 	
 	

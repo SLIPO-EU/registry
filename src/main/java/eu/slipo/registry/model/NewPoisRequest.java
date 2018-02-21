@@ -17,8 +17,8 @@ public class NewPoisRequest {
 	private String source;
 	private String sourceId;
 	@NotEmpty
-	private ArrayList<String> names;
-	private List<String> category;
+	private String names;
+	private String category;
 	@NotNull
 	private Geometry geometry; 
 	
@@ -48,19 +48,19 @@ public class NewPoisRequest {
 		this.sourceId = Objects.requireNonNull(sourceId);
 	}
 
-	public ArrayList<String> getNames() {
+	public String getNames() {
 		return names;
 	}
 
-	public void setNames(ArrayList<String> names) {
+	public void setNames(String names) {
 		this.names = Objects.requireNonNull(names);
 	}
 
-	public List<String> getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(List<String> category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
