@@ -680,49 +680,49 @@
   {
     "type": "post",
     "url": "register",
-    "title": "Register new POIs",
+    "title": "Assign new UUIDs",
     "version": "1.0.0",
     "name": "addPOIs",
     "group": "Registration",
     "permission": [
       {
-        "name": "anyone?"
+        "name": "anyone"
       }
     ],
-    "description": "<p>The Registry stores information for each POI</p>",
+    "description": "<p>The Registry stores information for each POI and assings a UUID to each POI.</p>",
     "parameter": {
       "fields": {
-        "Parameter": [
+        "Parameters[]": [
           {
-            "group": "Parameter",
+            "group": "Parameters[]",
             "type": "String",
             "optional": false,
             "field": "source",
             "description": "<p>An​ ​ identifier​ ​ specifying​ ​ the​ ​ source​ ​ of​ ​ this​ ​ POI</p>"
           },
           {
-            "group": "Parameter",
+            "group": "Parameters[]",
             "type": "String",
             "optional": false,
             "field": "source_id",
             "description": "<p>The​ ​ identifier​ ​ of​ ​ the​ ​ POI​ ​ in​ ​ its​ ​ source</p>"
           },
           {
-            "group": "Parameter",
-            "type": "String[]",
+            "group": "Parameters[]",
+            "type": "String",
             "optional": false,
             "field": "names",
-            "description": "<p>A list​ ​ containing​ ​ the​ ​ known​ ​ names​ ​ of​ ​ the​ ​ POI</p>"
+            "description": "<p>The​ ​ known​ ​ names​ ​ of​ ​ the​ ​ POI</p>"
           },
           {
-            "group": "Parameter",
-            "type": "String[]",
+            "group": "Parameters[]",
+            "type": "String",
             "optional": false,
-            "field": "categories",
-            "description": "<p>​A list​ ​ of​ ​ categories​ ​ this​ ​ POI​ ​ belongs​ ​ to</p>"
+            "field": "category",
+            "description": "<p>The ​ categories​ ​ this​ ​ POI​ ​ belongs​ ​ to</p>"
           },
           {
-            "group": "Parameter",
+            "group": "Parameters[]",
             "type": "Object",
             "optional": false,
             "field": "geom",
@@ -733,7 +733,7 @@
       "examples": [
         {
           "title": "Request Example",
-          "content": "POST https://registry.dev.slipo.eu/register {\n  \"tmpId\": \"imis\",\n  \"source\": \"AthenaRC\",\n  \"sourceId\": \"IMSI\",\n  \"names\": [\"Athena Research Center\", \"Athena RC\"],\n  \"category\": [\"Research Center\"],\n  \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          23.80241096019745,\n          38.036686288593074\n        ]\n      }\n}",
+          "content": "POST https://registry.dev.slipo.eu/register [\n{\n  \"tmpId\": \"imis\",\n  \"source\": \"AthenaRC\",\n  \"sourceId\": \"IMSI\",\n  \"names\": \"Athena Research Center\",\n  \"category\": \"Research Center\",\n  \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          23.80241096019745,\n          38.036686288593074\n        ]\n      }\n}\n]",
           "type": "json"
         }
       ]
@@ -790,7 +790,7 @@
       "examples": [
         {
           "title": "Response Example",
-          "content": "HTTP/1.1 200 OK\n{\n    \"errors\": [],\n    \"result\": {\n        \"status\": 1,\n        \"tempId\": \"IMSI\",\n        \"uri\": \"337b2899-5ad7-4144-85d1-30d6e3daf94f\"\n    },\n    \"success\": true\n}",
+          "content": "HTTP/1.1 200 OK\n{\n    \"errors\": [],\n    \"result\": [\n        {\n            \"status\": 1,\n            \"tempId\": \"imis\",\n            \"uri\": \"94c15086-5b8b-4a72-b02f-2fb7595c6bd0\"\n        }\n    ],\n    \"success\": true\n}",
           "type": "json"
         }
       ]
@@ -839,6 +839,170 @@
       ]
     },
     "filename": "src/webapp-action/Registration.js",
+    "groupTitle": "Registration"
+  },
+  {
+    "type": "post",
+    "url": "register",
+    "title": "Register POIs with given UUID",
+    "version": "1.0.0",
+    "name": "addPOIsbatch",
+    "group": "Registration",
+    "permission": [
+      {
+        "name": "anyone"
+      }
+    ],
+    "description": "<p>The Registry stores information for each POI and saves the UUID its given in tempid to each POI.</p>",
+    "parameter": {
+      "fields": {
+        "Parameters[]": [
+          {
+            "group": "Parameters[]",
+            "type": "String",
+            "optional": false,
+            "field": "source",
+            "description": "<p>An​ ​ identifier​ ​ specifying​ ​ the​ ​ source​ ​ of​ ​ this​ ​ POI</p>"
+          },
+          {
+            "group": "Parameters[]",
+            "type": "String",
+            "optional": false,
+            "field": "source_id",
+            "description": "<p>The​ ​ identifier​ ​ of​ ​ the​ ​ POI​ ​ in​ ​ its​ ​ source</p>"
+          },
+          {
+            "group": "Parameters[]",
+            "type": "String",
+            "optional": false,
+            "field": "names",
+            "description": "<p>The​ ​ known​ ​ names​ ​ of​ ​ the​ ​ POI</p>"
+          },
+          {
+            "group": "Parameters[]",
+            "type": "String",
+            "optional": false,
+            "field": "category",
+            "description": "<p>The ​ categories​ ​ this​ ​ POI​ ​ belongs​ ​ to</p>"
+          },
+          {
+            "group": "Parameters[]",
+            "type": "Object",
+            "optional": false,
+            "field": "geom",
+            "description": "<p>​   ​ ​          The​ ​ (default)​ ​ geometry​ ​ of​ ​ the​ ​ POI in GeoJSON format</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request Example",
+          "content": "POST https://registry.dev.slipo.eu/registerBatch [\n{\n  \"tmpId\": \"94c15086-5b8b-4a72-b02f-2fb7595c6bd0\",\n  \"source\": \"AthenaRC\",\n  \"sourceId\": \"IMSI\",\n  \"names\": \"Athena Research Center\",\n  \"category\": \"Research Center\",\n  \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          23.80241096019745,\n          38.036686288593074\n        ]\n      }\n}\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>Returns <code>true</code> or <code>false</code> indicating success of the operation.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "errors",
+            "description": "<p>Array of <code>Error</code> objects</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "result",
+            "description": "<p>An Array with instances of <code>Response</code> for each POI that was received. If the value of property <code>success</code> is <code>false</code>, <code>result</code> is <code>undefined</code></p>"
+          }
+        ],
+        "Response": [
+          {
+            "group": "Response",
+            "type": "String",
+            "optional": false,
+            "field": "source_id",
+            "description": "<p>The <code>source_id</code> that was recived.</p>"
+          },
+          {
+            "group": "Response",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Response code for each POI (1: Success, 2: Error).</p>"
+          },
+          {
+            "group": "Response",
+            "type": "String",
+            "optional": false,
+            "field": "uri",
+            "description": "<p>Unique uri.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Response Example",
+          "content": "HTTP/1.1 200 OK\n{\n    \"errors\": [],\n    \"result\": [\n        {\n            \"status\": 1,\n            \"tempId\": \"94c15086-5b8b-4a72-b02f-2fb7595c6bd0\",\n            \"uri\": \"94c15086-5b8b-4a72-b02f-2fb7595c6bd0\"\n        }\n    ],\n    \"success\": true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>Always <code>false</code>.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object[]",
+            "optional": false,
+            "field": "errors",
+            "description": "<p>Array of <code>Error</code> objects.</p>"
+          }
+        ],
+        "Error": [
+          {
+            "group": "Error",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>Unique error code.</p>"
+          },
+          {
+            "group": "Error",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Error message</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error Response Example",
+          "content": "HTTP/1.1 200 OK\n{\n  errors: [{\n    code: \"BasicErrorCode.NOT_IMPLEMENTED\",\n    description: \"Not implemented\"\n  }],\n  success: false\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/webapp-action/Registration2.js",
     "groupTitle": "Registration"
   }
 ]

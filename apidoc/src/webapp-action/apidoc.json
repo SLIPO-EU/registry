@@ -9,7 +9,7 @@
   },
   "order": [
     "Registration",
-    "register a POI",
+    "POI Delete",
     "POI Search"
   ],
   "template": {

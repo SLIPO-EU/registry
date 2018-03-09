@@ -82,8 +82,8 @@ public class RepositoryController extends BaseController
 		Geometry location = (Geometry) body.getGeometry().clone();
 		if (body.getGeometry().getSRID()==0) { // set default SRID if not any
 		location.setSRID(4326);}
-		System.out.println(location.getSRID());
-		System.out.println(body.getGeometry().getSRID() );
+		//System.out.println(location.getSRID());
+		//System.out.println(body.getGeometry().getSRID() );
 
 		poi.setGeo(location);
 		poi.setNames(body.getNames().toString());
@@ -97,9 +97,9 @@ public class RepositoryController extends BaseController
 
 	}
 	
-	@RequestMapping(method= RequestMethod.POST, value="/registerBach", consumes= MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method= RequestMethod.POST, value="/registerBatch", consumes= MediaType.APPLICATION_JSON_VALUE)
 	RestResponse<List<NewPoisResponse>> addNewBachPOIs(@RequestBody @Valid ArrayList<NewPoisRequest> bodys, BindingResult results) {
-		System.out.println(results);
+		//System.out.println(results);
 		String prefix = "http://slipo.eu/id/poi/";
 		if (results.hasErrors()) {
 			return RestResponse.error((Error) results);
@@ -120,17 +120,18 @@ public class RepositoryController extends BaseController
 		Geometry location = (Geometry) body.getGeometry().clone();
 		if (body.getGeometry().getSRID()==0) { // set default SRID if not any
 		location.setSRID(4326);}
-		System.out.println(location.getSRID());
-		System.out.println(body.getGeometry().getSRID() );
+		//System.out.println(location.getSRID());
+		//System.out.println(body.getGeometry().getSRID() );
 
 		poi.setGeo(location);
 		poi.setNames(body.getNames().toString());
 		
 		this.poiRepo.save(poi);
 		responce.add(new NewPoisResponse(body.getTmpId(),1,poi.getId().toString()));
-
-		}
+	
 		
+		}
+		this.poiRepo.flush();
 		return RestResponse.result(responce);
 
 		

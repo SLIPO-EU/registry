@@ -1,11 +1,11 @@
 /**
- * @api {post} register Assign new UUIDs
+ * @api {post} register Register POIs with given UUID
  * @apiVersion 1.0.0
- * @apiName addPOIs
+ * @apiName addPOIsbatch
  * @apiGroup Registration
  * @apiPermission anyone
  *
- * @apiDescription The Registry stores information for each POI and assings a UUID to each POI.
+ * @apiDescription The Registry stores information for each POI and saves the UUID its given in tempid to each POI.
  *
  * @apiParam (Parameters[])            {String}    source            An​ ​ identifier​ ​ specifying​ ​ the​ ​ source​ ​ of​ ​ this​ ​ POI
  * @apiParam (Parameters[])            {String}    source_id         The​ ​ identifier​ ​ of​ ​ the​ ​ POI​ ​ in​ ​ its​ ​ source
@@ -14,9 +14,9 @@
  * @apiParam (Parameters[])            {Object}    geom​   ​ ​          The​ ​ (default)​ ​ geometry​ ​ of​ ​ the​ ​ POI in GeoJSON format
  *
  * @apiParamExample {json} Request Example
- * POST https://registry.dev.slipo.eu/register [
+ * POST https://registry.dev.slipo.eu/registerBatch [
 {
-  "tmpId": "imis",
+  "tmpId": "94c15086-5b8b-4a72-b02f-2fb7595c6bd0",
   "source": "AthenaRC",
   "sourceId": "IMSI",
   "names": "Athena Research Center",
@@ -49,7 +49,7 @@
     "result": [
         {
             "status": 1,
-            "tempId": "imis",
+            "tempId": "94c15086-5b8b-4a72-b02f-2fb7595c6bd0",
             "uri": "94c15086-5b8b-4a72-b02f-2fb7595c6bd0"
         }
     ],

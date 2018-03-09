@@ -16,10 +16,10 @@ CREATE EXTENSION IF NOT EXISTS postgis_topology;
 CREATE TABLE pois
 (
   id UUID NOT NULL,
-  "source" character varying(100),
-  "source_id" character varying(100),
+  "source" character varying(255),
+  "source_id" character varying(255),
   "names" character varying(255) NOT NULL,
-  "categories" character varying(100) NULL,
+  "categories" character varying(255) NULL,
   geo geometry NOT NULL,
   CONSTRAINT enforce_dims_bbox CHECK (st_ndims(geo) = 2),
   --CONSTRAINT enforce_srid_bbox CHECK (st_srid(geo) = 4326),
